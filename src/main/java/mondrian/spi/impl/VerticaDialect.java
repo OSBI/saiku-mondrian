@@ -69,8 +69,15 @@ public class VerticaDialect extends JdbcDialectImpl {
     {
         // BIGINT->LONG should be the general rule, not just for Vertica,
         // see MONDRIAN-1890
-        return metaData.getColumnType(columnIndex + 1) == Types.BIGINT
-            ? SqlStatement.Type.LONG : super.getType(metaData, columnIndex);
+        int type = metaData.getColumnType(columnIndex + 1);
+
+        switch(type)
+        {
+            case Types.BIGINT: return SqlStatement.Type.LONG;
+            case Types.INTEGER: return SqlStatement.Type.LONG;                    
+        }
+
+        return     super.getType(metaData, columnIndex);
     }
 
 }
